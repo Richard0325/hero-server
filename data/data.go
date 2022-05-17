@@ -1,5 +1,13 @@
 package data
 
+type Hero struct {
+	Id    string `json:"id"`
+	Name  string `json:"name"`
+	Image string `json:"image"`
+}
+
+type Heroes []*Hero
+
 type Profile struct {
 	Str int `json:"str"`
 	Int int `json:"int"`
@@ -7,11 +15,11 @@ type Profile struct {
 	Luk int `json:"luk"`
 }
 
-type Hero struct {
+type AuthHero struct {
 	Id      string   `json:"id"`
 	Name    string   `json:"name"`
 	Image   string   `json:"image"`
 	Profile *Profile `json:"profile"`
 }
 
-type Heroes []*Hero
+type AuthHeroes []*AuthHero
