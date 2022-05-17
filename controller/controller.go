@@ -7,11 +7,12 @@ import (
 )
 
 func GetHeroes(c *gin.Context) {
-	name := c.GetHeader("name")
-	password := c.GetHeader("password")
-	// if there is no name and password
+	name := c.GetHeader("Name")
+	password := c.GetHeader("Password")
 	if name != "" && password != "" {
-		// if service.CheckAuth(name, password) {
+
+		// isAuthed, _ := service.CheckAuth(name, password)
+		// if isAuthed {
 
 		// }
 		// c.JSON(200, data)
@@ -21,8 +22,8 @@ func GetHeroes(c *gin.Context) {
 }
 
 func GetHero(c *gin.Context) {
-	name := c.GetHeader("name")
-	password := c.GetHeader("password")
+	name := c.GetHeader("Name")
+	password := c.GetHeader("Password")
 	if name != "" && password != "" {
 		// if service.CheckAuth(name, password) {
 

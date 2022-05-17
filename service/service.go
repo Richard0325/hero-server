@@ -9,18 +9,18 @@ import (
 )
 
 func CheckAuth(name string, password string) (bool, error) {
-	isAuth, err := dao.CallAuthenticate(name, password)
+	isAuthed, err := dao.CallAuthenticate(name, password)
 	cnt := 0
 	for err == data.ErrHahowServer1000 {
-		isAuth, err = dao.CallAuthenticate(name, password)
+		isAuthed, err = dao.CallAuthenticate(name, password)
 		cnt++
 		if cnt == 10 {
 			log.Warn("Hahow Authenticate API error")
-			return false, err
+			return false, data.ErrRequestTimeout
 		}
 	}
-	log.Debug("CheckAuth return: ", isAuth)
-	return isAuth, nil
+	log.Debug("CheckAuth return: ", isAuthed)
+	return isAuthed, nil
 }
 
 func TakeAllHeroes() (data.Heroes, error) {
@@ -31,11 +31,11 @@ func TakeAllHeroes() (data.Heroes, error) {
 		cnt++
 		if cnt == 10 {
 			log.Warn("Hahow ListHeroes API error")
-			return nil, err
+			return nil, data.ErrRequestTimeout
 		}
 	}
 	log.Debug("TakeAllHeros return: ", tools.PrettyPrint(ret))
-	return ret, nil
+	return ret, err
 }
 
 func TakeAllHeroesWithProfiles() (data.AuthHeroes, error) {
@@ -62,10 +62,37 @@ func TakeAllHeroesWithProfiles() (data.AuthHeroes, error) {
 	return ret, nil
 }
 
-func TakeSingleHero() {
-
+func TakeSingleHero(id string) (*data.Hero, error) {
+	ret, err := dao.CallSingleHero(id)
+	cnt := 0
+	for err == data.ErrHahowServer1000 {
+		ret, err = dao.CallSingleHero(id)
+		cnt++
+		if cnt == 10 {
+			log.Warn("Hahow Single Hero API error")
+			return nil, data.ErrRequestTimeout
+		}
+	}
+	log.Debug("TakeSingleHero return: ", tools.PrettyPrint(ret))
+	return ret, err
 }
 
-func TakeSingleHeroWithProfile() {
-
+func TakeSingleHeroWithProfile(id string) (*data.AuthHero, error) {
+	hero, err := TakeSingleHero(id)
+	if err != nil {
+		return nil, err
+	}
+	profile, err := dao.CallProfileOfHero(hero.Id)
+	if err != nil {
+		log.Warn("service: dao.CallProfileOfHero error", err)
+		return nil, err
+	}
+	ret := data.AuthHero{
+		Id:      hero.Id,
+		Name:    hero.Name,
+		Image:   hero.Image,
+		Profile: profile,
+	}
+	log.Debug("TakeSingleHeroWithProfile return: ", tools.PrettyPrint(ret))
+	return &ret, nil
 }

@@ -36,7 +36,7 @@ func CallListHeroes() (data.Heroes, error) {
 		log.Error("ListHeroes Backend Error")
 		return nil, data.ErrHahowServer1000
 	}
-	log.Debug(tools.PrettyPrint(ret))
+	log.Trace("CallListHeroes return: ", tools.PrettyPrint(ret))
 	return ret, nil
 }
 
@@ -67,7 +67,7 @@ func CallSingleHero(id string) (*data.Hero, error) {
 		log.Info("SingleHero Backend Error")
 		return nil, data.ErrHahowServer1000
 	}
-	log.Debug(tools.PrettyPrint(ret))
+	log.Trace(tools.PrettyPrint(ret))
 	return &ret, nil
 }
 
@@ -98,7 +98,7 @@ func CallProfileOfHero(id string) (*data.Profile, error) {
 		log.Info("ProfileOfHero Backend Error")
 		return nil, data.ErrHahowServer1000
 	}
-	log.Debug("profile return: ", tools.PrettyPrint(ret))
+	log.Trace("profile return: ", tools.PrettyPrint(ret))
 	return &ret, nil
 }
 
@@ -131,6 +131,6 @@ func CallAuthenticate(name string, password string) (bool, error) {
 		log.Info("Authenticate Backend Error")
 		return false, data.ErrHahowServer1000
 	}
-	log.Debug("auth return: ", content)
+	log.Trace("auth return: ", content)
 	return true, nil
 }
