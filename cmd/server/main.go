@@ -8,8 +8,7 @@ import (
 
 func main() {
 	r := gin.Default()
-
 	r.GET("/heroes", controller.GetHeroes)
-	r.GET("/heroes/:id", controller.GetHero)
+	r.GET("/heroes/:heroId", controller.GetSingleHero)
 	r.Run(":8080")
 }

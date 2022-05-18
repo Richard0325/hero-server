@@ -8,16 +8,16 @@ import (
 
 func TestCheckAuth(t *testing.T) {
 	got, err := CheckAuth("hahow", "rocks")
+	// if there is no error happens, it must return true
 	if err == nil && got != true {
-		t.Error("service.CheckAuth error")
+		t.Error("service: CheckAuth error when name and password are correct")
 	} else if got == false && err == data.ErrRequestTimeout {
-		t.Log("service.CheckAuth pass")
+		t.Log("service: CheckAuth pass")
 	}
 	got, err = CheckAuth("whatever", "it is")
+	// got must be false and err should either be ErrServer1000 or ErrNotAuthed or ErrUnknown
 	if got != false || err == nil {
-		t.Log(got)
-		t.Log(err.Error())
-		t.Error("service.CheckAuth error")
+		t.Error("servic: CheckAuth error when name and password are wrong")
 	}
 }
 
@@ -45,13 +45,12 @@ func TestTakeAllHeroes(t *testing.T) {
 			Image: "http://i.annihil.us/u/prod/marvel/i/mg/5/a0/538615ca33ab0/standard_xlarge.jpg",
 		},
 	}
-
 	if err == nil {
 		for i := range got {
 			if got[i].Id == want[i].Id && got[i].Name == want[i].Name && got[i].Image == want[i].Image {
 				continue
 			} else {
-				t.Error("dao: CallListHeroes error")
+				t.Error("service: TakeAllHeroes return value error")
 			}
 		}
 	}
@@ -132,6 +131,12 @@ func TestTakeSingleHero(t *testing.T) {
 			t.Error("value error")
 		}
 	}
+	_, err = TakeSingleHero("whatever")
+	if err != data.ErrRequestTimeout && err == data.ErrIdNotFound {
+		t.Log("service: TakeSingleHero passed when id not found")
+	} else if err == data.ErrUnknown {
+		t.Log("service: TakeSingleHero passed when unexpect error happen in dao")
+	}
 }
 
 func TestTakeSingleHeroWithProfile(t *testing.T) {
@@ -157,9 +162,15 @@ func TestTakeSingleHeroWithProfile(t *testing.T) {
 			t.Error("value error")
 		}
 	}
+	_, err = TakeSingleHeroWithProfile("whatever")
+	if err != data.ErrRequestTimeout && err == data.ErrIdNotFound {
+		t.Log("service: TakeSingleHeroWithProfile passed when id not found")
+	} else if err == data.ErrUnknown {
+		t.Log("service: TakeSingleHeroWithProfile passed when unexpect error happen in dao")
+	}
 }
 
-func TestM(t *testing.T) {
+func TestService(t *testing.T) {
 	t.Log("Test Case 1: When Hahow API works normally")
 	Init(model.DaoTypeMock, model.ModeNormal)
 	TestCheckAuth(t)
@@ -174,7 +185,7 @@ func TestM(t *testing.T) {
 	TestTakeAllHeroesWithProfiles(t)
 	TestTakeSingleHero(t)
 	TestTakeSingleHeroWithProfile(t)
-	t.Log("Test Case 2: When unexpected error happend in Dao")
+	t.Log("Test Case 3: When unexpected error happend in Dao")
 	Init(model.DaoTypeMock, model.ModeUnexpected)
 	TestCheckAuth(t)
 	TestTakeAllHeroes(t)

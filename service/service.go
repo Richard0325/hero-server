@@ -10,6 +10,9 @@ import (
 
 var dao model.Dao
 
+/*
+* To decide what dao to use, Real Hahow server or Mock server?
+ */
 func Init(t model.DaoType, m model.MockMode) {
 	if t == model.DaoTypeMock {
 		dao = model.InitMock(m)
@@ -18,8 +21,13 @@ func Init(t model.DaoType, m model.MockMode) {
 	}
 }
 
+/*
+* To Check if the user is authorized.
+* Return true only when receiving "OK"
+ */
 func CheckAuth(name string, password string) (bool, error) {
 	isAuthed, err := dao.CallAuthenticate(name, password)
+	//While hahow API error happens, trys to call it again and again till reach 10 times
 	cnt := 0
 	for err == data.ErrHahowServer1000 {
 		isAuthed, err = dao.CallAuthenticate(name, password)
@@ -33,8 +41,12 @@ func CheckAuth(name string, password string) (bool, error) {
 	return isAuthed, err
 }
 
+/*
+* To get all the heroes from Hahow
+ */
 func TakeAllHeroes() (data.Heroes, error) {
 	ret, err := dao.CallListHeroes()
+	//While hahow API error happens, trys to call it again and again till reach 10 times
 	cnt := 0
 	for err == data.ErrHahowServer1000 {
 		ret, err = dao.CallListHeroes()
@@ -48,6 +60,9 @@ func TakeAllHeroes() (data.Heroes, error) {
 	return ret, err
 }
 
+/*
+* To get all the heroes and put profile for each hero
+ */
 func TakeAllHeroesWithProfiles() (data.AuthHeroes, error) {
 	heroes, err := TakeAllHeroes()
 	if err != nil {
@@ -72,9 +87,13 @@ func TakeAllHeroesWithProfiles() (data.AuthHeroes, error) {
 	return ret, nil
 }
 
+/*
+* To get single hero
+ */
 func TakeSingleHero(id string) (*data.Hero, error) {
 	ret, err := dao.CallSingleHero(id)
 	cnt := 0
+	//While hahow API error happens, trys to call it again and again till reach 10 times
 	for err == data.ErrHahowServer1000 {
 		ret, err = dao.CallSingleHero(id)
 		cnt++
@@ -86,6 +105,10 @@ func TakeSingleHero(id string) (*data.Hero, error) {
 	log.Debug("TakeSingleHero return: ", tools.PrettyPrint(ret))
 	return ret, err
 }
+
+/*
+* To get single hero and put profile to him
+ */
 
 func TakeSingleHeroWithProfile(id string) (*data.AuthHero, error) {
 	hero, err := TakeSingleHero(id)

@@ -1,24 +1,22 @@
 package main
 
 import (
+	"fmt"
+	"hero-server/model"
 	"hero-server/service"
 
 	log "github.com/sirupsen/logrus"
 )
 
+/*
+* This file is a playground to testify functionalities while developing
+ */
 func init() {
 	log.SetLevel(log.DebugLevel)
 }
 
 func main() {
-	log.Debug("CheckAuth")
-	service.CheckAuth("hahow", "rocks")
-	// log.Debug("TakeAllHeroes")
-	// service.TakeAllHeroes()
-	// log.Debug("TakeAllHeroesWithProfiles")
-	// service.TakeAllHeroesWithProfiles()
-	// log.Debug("TakeSingleHero")
-	// service.TakeSingleHero("3")
-	// log.Debug("TakeSingleHeroWithProfile")
-	// service.TakeSingleHeroWithProfile("3")
+	service.Init(model.DaoTypeMock, model.ModeBroken)
+	_, err := service.TakeSingleHero("aabbcc")
+	fmt.Println(err.Error())
 }
