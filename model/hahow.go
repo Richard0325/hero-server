@@ -153,8 +153,10 @@ func (h HahowDao) CallAuthenticate(name string, password string) (bool, error) {
 		return false, data.ErrUnknown
 	}
 	defer response.Body.Close()
+	// fill data to Heroes data structure
 	body, _ := ioutil.ReadAll(response.Body)
 	content := string(body)
+	// if content is not OK means error code 1000 happens
 	if content != "OK" {
 		log.Trace("Authenticate Backend Error")
 		return false, data.ErrHahowServer1000
