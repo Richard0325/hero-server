@@ -1,4 +1,4 @@
-package dao
+package model
 
 import (
 	"hero-server/data"
@@ -6,8 +6,10 @@ import (
 	"testing"
 )
 
+var dao = InitHahow()
+
 func TestCallListHeroes(t *testing.T) {
-	got, err := CallListHeroes()
+	got, err := dao.CallListHeroes()
 	want := []data.Hero{
 		{
 			Id:    "1",
@@ -46,7 +48,7 @@ func TestCallListHeroes(t *testing.T) {
 func TestCallSingleHero(t *testing.T) {
 	for i := 1; i < 5; i++ {
 		id := strconv.Itoa(i)
-		got, err := CallSingleHero(id)
+		got, err := dao.CallSingleHero(id)
 		if err == nil {
 			wantId := id
 			if got.Id != wantId {
@@ -56,18 +58,18 @@ func TestCallSingleHero(t *testing.T) {
 			t.Error("dao: CallSingleHero error")
 		}
 	}
-	got, err := CallSingleHero("fkmdkfl")
+	got, err := dao.CallSingleHero("fkmdkfl")
 	if got != nil && err != data.ErrIdNotFound {
 		t.Error("dao: CallSingleHero error")
 	}
-	got, err = CallSingleHero("9999")
+	got, err = dao.CallSingleHero("9999")
 	if got != nil && err != data.ErrIdNotFound {
 		t.Error("dao: CallSingleHero error")
 	}
 }
 
 func TestCallProfileOfHero(t *testing.T) {
-	got, err := CallProfileOfHero("2")
+	got, err := dao.CallProfileOfHero("2")
 	want := data.Profile{
 		Str: 8,
 		Int: 2,
@@ -82,14 +84,14 @@ func TestCallProfileOfHero(t *testing.T) {
 		t.Error("dao: CallProfileOfHero error")
 	}
 
-	_, err = CallProfileOfHero("-10")
+	_, err = dao.CallProfileOfHero("-10")
 	if err != data.ErrIdNotFound {
 		t.Error("dao: CallProfileOfHero error")
 	}
 }
 
 func TestCallAuthenticate(t *testing.T) {
-	got, err := CallAuthenticate("hahow", "rocks")
+	got, err := dao.CallAuthenticate("hahow", "rocks")
 	if err == nil && got == true {
 		t.Log("dao: CallAuthenticate pass")
 	} else if err == data.ErrHahowServer1000 {
@@ -97,7 +99,7 @@ func TestCallAuthenticate(t *testing.T) {
 	} else {
 		t.Error("dao: CallAuthenticate error")
 	}
-	_, err = CallAuthenticate("whatever", "it is")
+	_, err = dao.CallAuthenticate("whatever", "it is")
 	if err == data.ErrNotAuthed {
 		t.Log("dao: CallAuthenticate pass")
 	} else {

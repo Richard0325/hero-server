@@ -1,12 +1,22 @@
 package service
 
 import (
-	"hero-server/dao"
 	"hero-server/data"
+	"hero-server/model"
 	"hero-server/tools"
 
 	log "github.com/sirupsen/logrus"
 )
+
+var dao model.Dao
+
+func Init(t model.DaoType, m model.MockMode) {
+	if t == model.DaoTypeMock {
+		dao = model.InitMock(m)
+	} else {
+		dao = model.InitHahow()
+	}
+}
 
 func CheckAuth(name string, password string) (bool, error) {
 	isAuthed, err := dao.CallAuthenticate(name, password)
@@ -20,7 +30,7 @@ func CheckAuth(name string, password string) (bool, error) {
 		}
 	}
 	log.Debug("CheckAuth return: ", isAuthed)
-	return isAuthed, nil
+	return isAuthed, err
 }
 
 func TakeAllHeroes() (data.Heroes, error) {

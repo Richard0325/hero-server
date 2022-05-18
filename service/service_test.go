@@ -2,6 +2,7 @@ package service
 
 import (
 	"hero-server/data"
+	"hero-server/model"
 	"testing"
 )
 
@@ -13,7 +14,9 @@ func TestCheckAuth(t *testing.T) {
 		t.Log("service.CheckAuth pass")
 	}
 	got, err = CheckAuth("whatever", "it is")
-	if got != false || err != nil {
+	if got != false || err == nil {
+		t.Log(got)
+		t.Log(err.Error())
 		t.Error("service.CheckAuth error")
 	}
 }
@@ -154,4 +157,28 @@ func TestTakeSingleHeroWithProfile(t *testing.T) {
 			t.Error("value error")
 		}
 	}
+}
+
+func TestM(t *testing.T) {
+	t.Log("Test Case 1: When Hahow API works normally")
+	Init(model.DaoTypeMock, model.ModeNormal)
+	TestCheckAuth(t)
+	TestTakeAllHeroes(t)
+	TestTakeAllHeroesWithProfiles(t)
+	TestTakeSingleHero(t)
+	TestTakeSingleHeroWithProfile(t)
+	t.Log("Test Case 2: When Hahow API return error all the time")
+	Init(model.DaoTypeMock, model.ModeBroken)
+	TestCheckAuth(t)
+	TestTakeAllHeroes(t)
+	TestTakeAllHeroesWithProfiles(t)
+	TestTakeSingleHero(t)
+	TestTakeSingleHeroWithProfile(t)
+	t.Log("Test Case 2: When unexpected error happend in Dao")
+	Init(model.DaoTypeMock, model.ModeUnexpected)
+	TestCheckAuth(t)
+	TestTakeAllHeroes(t)
+	TestTakeAllHeroesWithProfiles(t)
+	TestTakeSingleHero(t)
+	TestTakeSingleHeroWithProfile(t)
 }

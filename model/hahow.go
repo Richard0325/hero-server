@@ -1,4 +1,4 @@
-package dao
+package model
 
 import (
 	"bytes"
@@ -11,7 +11,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func CallListHeroes() (data.Heroes, error) {
+type HahowDao struct{}
+
+func InitHahow() HahowDao {
+	return HahowDao{}
+}
+
+func (h HahowDao) CallListHeroes() (data.Heroes, error) {
 	url := "https://hahow-recruit.herokuapp.com/heroes"
 	request, err := http.NewRequest("GET", url, nil)
 	request.Header.Set("Content-Type", "application/json; charset=UTF-8")
@@ -40,7 +46,7 @@ func CallListHeroes() (data.Heroes, error) {
 	return ret, nil
 }
 
-func CallSingleHero(id string) (*data.Hero, error) {
+func (h HahowDao) CallSingleHero(id string) (*data.Hero, error) {
 	url := "https://hahow-recruit.herokuapp.com/heroes/" + id
 	request, err := http.NewRequest("GET", url, nil)
 	request.Header.Set("Content-Type", "application/json; charset=UTF-8")
@@ -54,7 +60,7 @@ func CallSingleHero(id string) (*data.Hero, error) {
 	}
 	// only 404 or 200 is acceptable
 	if response.StatusCode == http.StatusNotFound {
-		log.Info("SingleHero Id Not Found")
+		log.Trace("SingleHero Id Not Found")
 		return nil, data.ErrIdNotFound
 	} else if response.StatusCode != http.StatusOK {
 		return nil, data.ErrUnknown
@@ -64,14 +70,14 @@ func CallSingleHero(id string) (*data.Hero, error) {
 	ret := data.Hero{}
 	json.Unmarshal(body, &ret)
 	if ret.Id == "" {
-		log.Info("SingleHero Backend Error")
+		log.Trace("SingleHero Backend Error")
 		return nil, data.ErrHahowServer1000
 	}
 	log.Trace(tools.PrettyPrint(ret))
 	return &ret, nil
 }
 
-func CallProfileOfHero(id string) (*data.Profile, error) {
+func (h HahowDao) CallProfileOfHero(id string) (*data.Profile, error) {
 	url := "https://hahow-recruit.herokuapp.com/heroes/" + id + "/profile"
 	request, err := http.NewRequest("GET", url, nil)
 	request.Header.Set("Content-Type", "application/json; charset=UTF-8")
@@ -95,14 +101,14 @@ func CallProfileOfHero(id string) (*data.Profile, error) {
 	ret := data.Profile{}
 	json.Unmarshal(body, &ret)
 	if ret.Str == 0 && ret.Int == 0 && ret.Agi == 0 && ret.Luk == 0 {
-		log.Info("ProfileOfHero Backend Error")
+		log.Trace("ProfileOfHero Backend Error")
 		return nil, data.ErrHahowServer1000
 	}
 	log.Trace("profile return: ", tools.PrettyPrint(ret))
 	return &ret, nil
 }
 
-func CallAuthenticate(name string, password string) (bool, error) {
+func (h HahowDao) CallAuthenticate(name string, password string) (bool, error) {
 	url := "https://hahow-recruit.herokuapp.com/auth"
 	values := map[string]string{"name": name, "password": password}
 	jsonValue, _ := json.Marshal(values)
@@ -118,17 +124,17 @@ func CallAuthenticate(name string, password string) (bool, error) {
 	}
 	// only 401 or 200 is acceptable
 	if response.StatusCode == http.StatusUnauthorized {
-		log.Info("Not Authorized")
+		log.Trace("Not Authorized")
 		return false, data.ErrNotAuthed
 	} else if response.StatusCode != http.StatusOK {
-		log.Info("Unkown Error")
+		log.Trace("Unkown Error")
 		return false, data.ErrUnknown
 	}
 	defer response.Body.Close()
 	body, _ := ioutil.ReadAll(response.Body)
 	content := string(body)
 	if content != "OK" {
-		log.Info("Authenticate Backend Error")
+		log.Trace("Authenticate Backend Error")
 		return false, data.ErrHahowServer1000
 	}
 	log.Trace("auth return: ", content)
