@@ -4,7 +4,12 @@ import (
 	"hero-server/controller"
 
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
+
+func init() {
+	log.SetLevel(log.WarnLevel)
+}
 
 func main() {
 	r := gin.Default()

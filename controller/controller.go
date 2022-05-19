@@ -28,7 +28,7 @@ func GetHeroes(c *gin.Context) {
 		if isAuthed {
 			authHeroes, err := service.TakeAllHeroesWithProfiles()
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, nil)
+				c.JSON(http.StatusInternalServerError, "Not able to acces data")
 				return
 			}
 			c.JSON(http.StatusOK, map[string]interface{}{
@@ -65,7 +65,7 @@ func GetSingleHero(c *gin.Context) {
 				c.JSON(http.StatusNotFound, "NotFound")
 				return
 			} else if err != nil {
-				c.JSON(http.StatusInternalServerError, nil)
+				c.JSON(http.StatusInternalServerError, "Not able to acces data")
 				return
 			}
 			c.JSON(http.StatusOK, authHero)
@@ -75,7 +75,7 @@ func GetSingleHero(c *gin.Context) {
 	//all people without being authorized successfully will get unauthenticated data
 	hero, err := service.TakeSingleHero(heroId)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, "NotFound")
+		c.JSON(http.StatusNotFound, "NotFound")
 		return
 	}
 	c.JSON(http.StatusOK, hero)
