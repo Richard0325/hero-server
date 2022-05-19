@@ -17,7 +17,7 @@ docker-compose up -d
 /yourserver:8080/heroes/{heroId}
 ```
 ## 專案的架構，API server 的架構邏輯?
-資料夾及檔案結構如下：
+### 資料夾及檔案結構如下：
 ```
 |__cmd              # 主程式
 |  |__server              # 最終執行的主程式
@@ -47,7 +47,7 @@ docker-compose up -d
 |__go.sum
 |__README.md
 ```
-API邏輯如下：
+### API邏輯如下：
 ```
 /GetHeroes
     |-> 有Name及Password
@@ -121,7 +121,7 @@ API邏輯如下：
 ## 你對於所有使用到的第三方 library 的理解，以及他們的功能簡介?
 - [gin](https://github.com/gin-gonic/gin)\
 為 golang 的 API 框架，可以很方便的架起 API server，使對應的 url 導入到對應的 handler，並且讓對應的 handler 可以很簡便的取得 http request 中 query string、header 或 body 以及回傳 response。
-- [logrus]("https://github.com/sirupsen/logrus")\
+- [logrus](https://github.com/sirupsen/logrus)\
 為 golang 原生 log 系統的強化版，我主要用其可以將 log 區分等級，方便在開發時在適當的時機過濾並且取得想要的 log 以方便 debug。
 ## 你在程式碼中寫註解的原則，遇到什麼狀況會寫註解?
 原則上我希望盡量透過命名及結構來增加可讀性，註解越少越好，以下情形是比較常會寫註解的情況：
